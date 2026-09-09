@@ -31,9 +31,10 @@
             text-align: center;
             border: 4px solid #FAD6A5;
             position: relative;
-            display: none; 
+            display: none; /* 默认隐藏其他页面 */
         }
 
+        /* 关键修复：让启动页默认直接以 flex 显示，彻底杜绝加载时闪动 */
         #start-screen {
             display: flex;
             flex-direction: column;
@@ -57,7 +58,7 @@
         }
 
         .title-group h1 {
-            font-size: 30px; 
+            font-size: 24px; 
             margin: 0 0 5px 0;
             color: #D2691E;
             white-space: nowrap;
@@ -185,7 +186,6 @@
             box-shadow: none;
         }
 
-        /* 海报截图区改为纯白底，完美融合图片底色 */
         #capture-area {
             width: 100%;
             aspect-ratio: 1 / 1; 
@@ -200,60 +200,6 @@
             padding: 15px;
             margin-bottom: 20px;
         }
-
-        #poster-modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.85);
-            z-index: 9999;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        #generated-poster {
-            width: 85%;
-            max-width: 400px;
-            aspect-ratio: 1 / 1;
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(255,255,255,0.3);
-            border: 4px solid #FFF;
-            object-fit: cover;
-        }
-        .poster-tips {
-            color: white;
-            margin-top: 15px;
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            text-align: center;
-        }
-        
-        .modal-btn-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .save-btn {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-        }
-        .close-modal {
-            background: rgba(255,255,255,0.3);
-            color: white;
-            border: 2px solid white;
-            padding: 8px 25px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-        }
     </style>
 </head>
 <body>
@@ -261,7 +207,7 @@
 <audio id="bgm" src="https://upload.wikimedia.org/wikipedia/commons/3/34/Kevin_MacLeod_-_Monkeys_Spinning_Monkeys.ogg" type="audio/ogg" loop preload="auto"></audio>
 
 <!-- 启动页 -->
-<div class="game-container" id="start-screen" style="display: flex;">
+<div class="game-container" id="start-screen">
     <div class="header-layout">
         <img src="gonggu.png" alt="巩固" class="logo-img">
         <div class="title-group">
@@ -292,7 +238,6 @@
 
 <!-- 结果页 -->
 <div class="game-container" id="result-screen">
-    <!-- 专属 1:1 海报区域 (纯白底，完美解决白框问题) -->
     <div id="capture-area">
         <div class="header-layout" style="margin-bottom: 5px;">
             <img src="gonggu.png" alt="巩固" style="width: 50px; height: 50px; object-fit: contain;">
@@ -309,16 +254,6 @@
     <div class="btn-group" id="action-buttons">
         <button class="poster-btn" onclick="generatePoster()">📸 生成专属海报</button>
         <button class="restart-btn" onclick="location.reload()">再玩一次 🔁</button>
-    </div>
-</div>
-
-<!-- 海报弹窗 -->
-<div id="poster-modal">
-    <img id="generated-poster" src="" alt="你的专属海报">
-    <div class="poster-tips">👆 长按图片保存，或点击下方按钮 👆</div>
-    <div class="modal-btn-group">
-        <button class="save-btn" onclick="downloadPoster()">⬇️ 保存图片</button>
-        <button class="close-modal" onclick="closePoster()">❌ 关闭</button>
     </div>
 </div>
 
@@ -499,29 +434,18 @@
         const captureArea = document.getElementById('capture-area');
         
         html2canvas(captureArea, {
-            scale: 2, // 提高清晰度
+            scale: 2, 
             backgroundColor: "#FFFFFF",
             useCORS: true 
         }).then(canvas => {
             const imgData = canvas.toDataURL('image/png');
-            document.getElementById('generated-poster').src = imgData;
-            document.getElementById('poster-modal').style.display = 'flex';
+            const a = document.createElement('a');
+            a.href = imgData;
+            a.download = '苗友大考察_成绩单.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         });
-    }
-
-    // 主动保存下载功能
-    function downloadPoster() {
-        const imgEl = document.getElementById('generated-poster');
-        const a = document.createElement('a');
-        a.href = imgEl.src;
-        a.download = '苗友大考察_成绩单.png'; // 下载的文件名
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    }
-
-    function closePoster() {
-        document.getElementById('poster-modal').style.display = 'none';
     }
 </script>
 
