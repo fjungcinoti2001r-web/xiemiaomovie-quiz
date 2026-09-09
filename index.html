@@ -31,10 +31,9 @@
             text-align: center;
             border: 4px solid #FAD6A5;
             position: relative;
-            display: none; /* 默认隐藏其他页面 */
+            display: none; 
         }
 
-        /* 关键修复：让启动页默认直接以 flex 显示，彻底杜绝加载时闪动 */
         #start-screen {
             display: flex;
             flex-direction: column;
@@ -200,6 +199,30 @@
             padding: 15px;
             margin-bottom: 20px;
         }
+
+        /* 手机端海报直接展示区域的样式 */
+        #mobile-poster-box {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 15px;
+        }
+        #final-poster-img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 20px;
+            border: 4px solid #FAD6A5;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .save-tip {
+            font-size: 14px;
+            color: #D2691E;
+            font-weight: bold;
+            margin-top: 8px;
+            background-color: #FFEFD5;
+            padding: 5px 15px;
+            border-radius: 15px;
+        }
     </style>
 </head>
 <body>
@@ -238,6 +261,7 @@
 
 <!-- 结果页 -->
 <div class="game-container" id="result-screen">
+    <!-- 原始排版区（用于截取生成海报） -->
     <div id="capture-area">
         <div class="header-layout" style="margin-bottom: 5px;">
             <img src="gonggu.png" alt="巩固" style="width: 50px; height: 50px; object-fit: contain;">
@@ -251,8 +275,14 @@
         <div style="margin-top: 15px; font-size: 12px; color: #CD853F; font-weight: bold; letter-spacing: 1px;">© 演员谢苗超话制作</div>
     </div>
     
+    <!-- 生成后的海报直接展示区（手机端最稳妥的保存方式） -->
+    <div id="mobile-poster-box">
+        <img id="final-poster-img" src="" alt="专属海报">
+        <div class="save-tip">👇 手机长按上方图片即可保存到相册 👇</div>
+    </div>
+
     <div class="btn-group" id="action-buttons">
-        <button class="poster-btn" onclick="generatePoster()">📸 生成专属海报</button>
+        <button class="poster-btn" id="poster-gen-btn" onclick="generatePoster()">📸 生成专属海报</button>
         <button class="restart-btn" onclick="location.reload()">再玩一次 🔁</button>
     </div>
 </div>
@@ -299,7 +329,7 @@
         { image: "./images/河神·诡水怪谈.jpg", options: ["《破神录》", "《河神·诡水怪谈》", "《叶问宗师觉醒》", "《制暴》"], answer: "《河神·诡水怪谈》" },
         { image: "./images/忽必烈传奇.jpg", options: ["《少林寺传奇3：大漠英豪》", "《宰相小甘罗》", "《忽必烈传奇》", "《辛弃疾1162》"], answer: "《忽必烈传奇》" },
         { image: "./images/火遮眼.jpg", options: ["《火遮眼》", "《缉恶》", "《捉刀人》", "《东北警察故事3》"], answer: "《火遮眼》" },
-        { image: "./images/火遮眼-2.jpg", options: ["《缉恶》", "《火遮眼》", "《目中无人》", "《叶问宗师觉醒》"], answer: "《火遮眼》" },
+        { image: "./images/火遮眼-2.jpg", options: ["《缉恶》", "《火遮眼》", "《目中无人》", "《叶问宗师觉醒》"], answer: "《火遮眼》- 2" },
         { image: "./images/缉恶.jpg", options: ["《东北警察故事2》", "《火遮眼》", "《缉恶》", "《我的杀手女友》"], answer: "《缉恶》" },
         { image: "./images/缉恶 2.jpg", options: ["《缉恶》", "《制暴》", "《破神录》", "《东北警察故事3》"], answer: "《缉恶》 2" },
         { image: "./images/酒剑.jpg", options: ["《酒剑》", "《刺客荣耀·荆轲》", "《新江山美人》", "《热血不良帅》"], answer: "《酒剑》" },
@@ -429,9 +459,12 @@
         document.getElementById('player-title').innerText = title;
     }
 
-    // 生成海报
+    // 生成海报并直接原地转换为图片展示，方便手机长按保存
     function generatePoster() {
         const captureArea = document.getElementById('capture-area');
+        const mobilePosterBox = document.getElementById('mobile-poster-box');
+        const finalPosterImg = document.getElementById('final-poster-img');
+        const posterGenBtn = document.getElementById('poster-gen-btn');
         
         html2canvas(captureArea, {
             scale: 2, 
@@ -439,12 +472,12 @@
             useCORS: true 
         }).then(canvas => {
             const imgData = canvas.toDataURL('image/png');
-            const a = document.createElement('a');
-            a.href = imgData;
-            a.download = '苗友大考察_成绩单.png';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            finalPosterImg.src = imgData;
+            
+            // 隐藏原始文字排版区和生成按钮，平滑切换为现成的 1:1 图片
+            captureArea.style.display = 'none';
+            posterGenBtn.style.display = 'none';
+            mobilePosterBox.style.display = 'flex';
         });
     }
 </script>
