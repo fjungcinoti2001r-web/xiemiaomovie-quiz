@@ -230,15 +230,32 @@
 <audio id="bgm" src="https://upload.wikimedia.org/wikipedia/commons/3/34/Kevin_MacLeod_-_Monkeys_Spinning_Monkeys.ogg" type="audio/ogg" loop preload="auto"></audio>
 
 <!-- 启动页 -->
-<div class="game-container" id="start-screen">
-    <div class="header-layout">
+<div class="game-container" id="start-screen" style="display: flex;">
+    <!-- 第一行：大标题 -->
+    <div class="header-layout" style="margin-bottom: 5px;">
         <img src="gonggu.png" alt="巩固" class="logo-img">
         <div class="title-group">
             <h1>局部猜苗片</h1>
         </div>
         <img src="xiemiao.png" alt="谢苗" class="logo-img">
     </div>
-    <p style="color: #8B5A2B; font-weight: bold;">苗友大考察</p>
+    
+    <!-- 第二行：保留的副标题（字号大一些） -->
+    <div style="color: #8B5A2B; font-weight: 900; font-size: 18px; margin-top: 0; margin-bottom: 12px; letter-spacing: 2px;">
+        苗友大考察
+    </div>
+    
+    <!-- 第三行：头像 + 超话（字号稍小） -->
+    <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 10px;">
+        <img src="avatar-logo.png" alt="Logo" style="width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #FAD6A5; object-fit: contain; background-color: #FFF;">
+        <span style="font-size: 14px; color: #8B5A2B; font-weight: bold;">演员谢苗超话</span>
+    </div>
+    
+    <!-- 第四行：制作人信息 -->
+    <div style="font-size: 12px; color: #CD853F; font-weight: bold; margin-bottom: 25px;">
+        制作：林科森
+    </div>
+
     <button class="start-btn" onclick="startGame()">开始挑战</button>
 </div>
 
